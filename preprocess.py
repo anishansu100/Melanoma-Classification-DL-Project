@@ -6,9 +6,9 @@ def get_data(file_path):
 	train_datagen = ImageDataGenerator(rescale = 1./255)
 	test_datagen = ImageDataGenerator(rescale = 1./255)
 	train_generator = train_datagen.flow_from_directory(
-                  '/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train',
+                  '/home/anish_pradhan/Melanoma-Classification-DL-Project/train',
                   target_size =(100, 100),  # target_size = input image size
 				  color_mode="rgb", # for coloured images
                   batch_size = 1,
                   class_mode ='binary')
-				  
+	
