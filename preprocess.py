@@ -11,4 +11,5 @@ def get_data(file_path):
 				  color_mode="rgb", # for coloured images
                   batch_size = 500,
                   class_mode ='binary')
+	return train_generator
 	
