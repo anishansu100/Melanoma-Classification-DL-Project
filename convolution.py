@@ -220,7 +220,7 @@ def main():
     
     :return: None
     '''
-    train_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
+    train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     model = Sequential([
             BatchNormalization(),
             Conv2D(3, 50, 50, activation="relu", padding="same"),
@@ -235,11 +235,15 @@ def main():
             Dense(2,  activation='relu'),
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy())
-    history = model.fit(train_generator,
+    model.fit(train_generator,
         batch_size = 500,
         epochs=2)
+    
+    print("Evaluate model on test data")
+    results = model.evaluate(test_generator, batch_size=500)
+    print("test loss, test acc:", results)
 
-    print(history.history)
+
     
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
