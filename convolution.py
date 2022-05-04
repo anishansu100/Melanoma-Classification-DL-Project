@@ -220,7 +220,27 @@ def main():
     
     :return: None
     '''
-    train_inputs =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
+    train_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
+    model = Sequential([
+            BatchNormalization(),
+            Conv2D(3, 50, 50, activation="relu", padding="same"),
+            Conv2D(32, 46, 46, activation="relu", padding="same"),
+            MaxPool2D(2, padding="same"),
+            Dropout(0.15),
+            Conv2D(64, 21, 21, activation="relu", padding="same"),
+            Conv2D(64, 19, 19, activation="relu", padding="same"),
+            Dropout(0.15),
+            Flatten(),
+            Dense(128, activation='relu'),
+            Dense(2,  activation='relu'),
+        ])
+    model.compile(optimizer= tf.keras.optimizer.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = [tf.keras.metrics.BinaryAccuracy(), tf.keras.metrics.AUC])
+    history = model.fit(train_generator,
+        batch_size = 500,
+        epochs=2)
+
+    print(history.history)
+    
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
 
