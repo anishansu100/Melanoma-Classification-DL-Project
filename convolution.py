@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 from matplotlib import pyplot as plt
 from preprocess import get_data
-from convolution import conv2d
 
 import os
 import tensorflow as tf
@@ -12,11 +11,9 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.math import exp, sqrt
-
-# ensures that we run only on cpu
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+ 
 class Model(tf.keras.Model):
-    def __init__(self, input_size, latent_size=15):
+    def __init__(self, input_size):
         """
         This model class will contain the architecture for your CNN that 
         classifies images. We have left in variables in the constructor
@@ -223,18 +220,19 @@ def main():
     
     :return: None
     '''
-    # Training Inputs
-    train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/hw2-cnns-anishansu100/data/train",3, 5)
+    get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
+    # # Training Inputs
+    # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
 
-    # Testing Inputs 
-    test_inputs, test_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/hw2-cnns-anishansu100/data/test",3, 5)
+    # # Testing Inputs 
+    # test_inputs, test_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
 
-    # Model with 20 epochs
-    model = Model()
-    epoches = 20
-    for i in range(epoches):
-        train(model, train_inputs, train_labels)
-    test(model, test_inputs, test_labels)
+    # # Model with 20 epochs
+    # model = Model()
+    # epoches = 20
+    # for i in range(epoches):
+    #     train(model, train_inputs, train_labels)
+    # test(model, test_inputs, test_labels)
 
 
 if __name__ == '__main__':
