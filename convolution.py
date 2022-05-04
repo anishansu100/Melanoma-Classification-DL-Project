@@ -220,9 +220,7 @@ def main():
     
     :return: None
     '''
-    train_inputs, train_labels =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
-    print(train_inputs.shape)
-    print(train_labels.shape)
+    train_inputs =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
 
