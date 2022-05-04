@@ -9,6 +9,6 @@ def get_data(file_path):
                   '/home/anish_pradhan/Melanoma-Classification-DL-Project/train',
                   target_size =(100, 100),  # target_size = input image size
 				  color_mode="rgb", # for coloured images
-                  batch_size = 1,
+                  batch_size = 500,
                   class_mode ='binary')
 	
