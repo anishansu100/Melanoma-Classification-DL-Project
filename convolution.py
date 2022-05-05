@@ -7,7 +7,7 @@ import tensorflow as tf
 import numpy as np
 import random
 import math
-from tensorflow.keras_visualizer import visualizer 
+from keras_visualizer import visualizer 
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
