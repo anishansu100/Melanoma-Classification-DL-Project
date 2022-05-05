@@ -7,6 +7,7 @@ import tensorflow as tf
 import numpy as np
 import random
 import math
+from tensorflow.keras_visualizer import visualizer 
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
@@ -234,6 +235,9 @@ def main():
             Dense(128, activation='relu'),
             Dense(1,  activation='relu'),
         ])
+    model.summary() 
+  
+    visualizer(model, format='png', view=True)
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy'])
     model.fit(train_generator,
         batch_size = 500,
