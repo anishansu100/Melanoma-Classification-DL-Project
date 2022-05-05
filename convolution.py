@@ -236,12 +236,12 @@ def main():
             Dense(1,  activation='relu'),
         ])
     model.summary() 
-  
-    visualizer(model, format='png', view=True)
+
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy'])
     model.fit(train_generator,
         batch_size = 500,
         epochs=2)
+    visualizer(model, format='png', view=True)
     
     print("Evaluate model on test data")
     results = model.evaluate(test_generator, batch_size=500)
