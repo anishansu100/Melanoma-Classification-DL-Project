@@ -13,135 +13,7 @@ from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.math import exp, sqrt
  
-class Model(tf.keras.Model):
-    def __init__(self, input_size):
-        """
-        This model class will contain the architecture for your CNN that 
-        classifies images. We have left in variables in the constructor
-        for you to fill out, but you are welcome to change them if you'd like.
-        """
-        super(Model, self).__init__()
-        self.input_size = input_size # H*W
-        self.latent_size = latent_size  # Z
-        self.hidden = 500  # H_d
-        self.dense = None
 
-        ############################################################################################
-        # TODO: Implement the fully-connected encoder architecture described in the notebook.      #
-        # Specifically, self.encoder should be a network that inputs a batch of input images of    #
-        # shape (N, 1, H, W) into a batch of hidden features of shape (N, H_d). Set up             #
-        # self.mu_layer and self.logvar_layer to be a pair of linear layers that map the hidden    #
-        # features into estimates of the mean and log-variance of the posterior over the latent    #
-        # vectors; the mean and log-variance estimates will both be tensors of shape (N, Z).       #
-        ############################################################################################
-        # Replace "pass" statement with your code
-        self.dense = Sequential([
-            BatchNormalization(),
-            Conv2D(3, 50, 50, activation="relu", padding="same"),
-            Conv2D(32, 46, 46, activation="relu", padding="same"),
-            MaxPool2D(2, padding="same"),
-            Dropout(0.15),
-            Conv2D(64, 21, 21, activation="relu", padding="same"),
-            Conv2D(64, 19, 19, activation="relu", padding="same"),
-            Dropout(0.15),
-            Flatten(),
-            Dense(128, activation='relu'),
-            Dense(2,  activation='relu'),
-        ])
-
-        
-        ############################################################################################
-        #                                      END OF YOUR CODE                                    #
-        ############################################################################################
-        
-
-
-
-    def call(self, inputs):
-
-        """
-        Runs a forward pass on an input batch of images.
-        
-        :param inputs: images, shape of (num_inputs, 32, 32, 3); during training, the shape is (batch_size, 32, 32, 3)
-        :param is_testing: a boolean that should be set to True only when you're doing Part 2 of the assignment and this function is being called during testing
-        :return: logits - a matrix of shape (num_inputs, num_classes); during training, it would be (batch_size, 2)
-        """
-        prob = self.dense(inputs)
-        return prob
-        
-
-    def loss(self, logits, labels):
-        """
-        Calculates the model cross-entropy loss after one forward pass.
-        Softmax is applied in this function.
-        
-        :param logits: during training, a matrix of shape (batch_size, self.num_classes) 
-        containing the result of multiple convolution and feed forward layers
-        :param labels: during training, matrix of shape (batch_size, self.num_classes) containing the train labels
-        :return: the loss of the model as a Tensor
-        """
-        return tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels, logits))
-
-    def accuracy(self, logits, labels):
-        """
-        Calculates the model's prediction accuracy by comparing
-        logits to correct labels – no need to modify this.
-        
-        :param logits: a matrix of size (num_inputs, self.num_classes); during training, this will be (batch_size, self.num_classes)
-        containing the result of multiple convolution and feed forward layers
-        :param labels: matrix of size (num_labels, self.num_classes) containing the answers, during training, this will be (batch_size, self.num_classes)
-        NOTE: DO NOT EDIT
-        
-        :return: the accuracy of the model as a Tensor
-        """
-        correct_predictions = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
-        return tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
-
-def train(model, train_inputs, train_labels):
-    '''
-    Trains the model on all of the inputs and labels for one epoch. You should shuffle your inputs 
-    and labels - ensure that they are shuffled in the same order using tf.gather or zipping.
-    To increase accuracy, you may want to use tf.image.random_flip_left_right on your
-    inputs before doing the forward pass. You should batch your inputs.
-    
-    :param model: the initialized model to use for the forward pass and backward pass
-    :param train_inputs: train inputs (all inputs to use for training), 
-    shape (num_inputs, width, height, num_channels)
-    :param train_labels: train labels (all labels to use for training), 
-    shape (num_labels, num_classes)
-    :return: Optionally list of losses per batch to use for visualize_loss
-    '''
-    # Intializes inputs and labels
-    indices = tf.random.shuffle(tf.range(0, train_inputs.shape[0], dtype=tf.int32))
-    shuffled_inputs = tf.gather(train_inputs, indices)
-    shuffled_labels = tf.gather(train_labels, indices)
-    shuffled_inputs  = tf.image.random_flip_left_right(shuffled_inputs)
-    # The division between batch sizes of 64 
-    for i in range(0, len(train_inputs), model.batch_size):
-        inputs = shuffled_inputs[i: i + model.batch_size]
-        labels = shuffled_labels[i: i + model.batch_size]
-
-        # Gradient descent and backpropogation takes place
-        with tf.GradientTape() as tape:
-            pred = model.call(inputs, False)
-            loss = model.loss(pred, labels)
-            model.losses.append(loss)
-        gradient = tape.gradient(loss, model.trainable_variables)
-        model.a_optimizer.apply_gradients(zip(gradient, model.trainable_variables))
-
-def test(model, test_inputs, test_labels):
-    """
-    Tests the model on the test inputs and labels. You should NOT randomly 
-    flip images or do any extra preprocessing.
-    
-    :param test_inputs: test data (all images to be tested), 
-    shape (num_inputs, width, height, num_channels)
-    :param test_labels: test labels (all corresponding labels),
-    shape (num_labels, num_classes)
-    :return: test accuracy - this should be the average accuracy across
-    all batchesc
-    """
-    return model.accuracy(model.call(test_inputs, True), test_labels)
 
 
 def visualize_loss(losses): 
@@ -237,7 +109,7 @@ def main():
         ])
 
 
-    model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy'])
+    model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     model.fit(train_generator,
         batch_size = 500,
         epochs=2)
