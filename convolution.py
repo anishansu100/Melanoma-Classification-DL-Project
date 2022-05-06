@@ -108,24 +108,25 @@ def main():
             Dense(1,  activation='relu'),
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
-    model.fit(train_generator[0][0:100],
-        batch_size = 10,
-        epochs=2)
-    # model.fit(train_generator,
-    #     batch_size = 500,
+    print(train_generator[0][0:100])
+    # model.fit(train_generator[0][0:100],
+    #     batch_size = 10,
     #     epochs=2)
-    model.summary() 
+    # # model.fit(train_generator,
+    # #     batch_size = 500,
+    # #     epochs=2)
+    # model.summary() 
     
-    visualizer(model, format='png', view=True)
+    # visualizer(model, format='png', view=True)
     
-    print("Evaluate model on test data")
-    results = model.evaluate(test_generator, batch_size=500)
-    print("test loss, test acc:", results)
+    # print("Evaluate model on test data")
+    # results = model.evaluate(test_generator, batch_size=500)
+    # print("test loss, test acc:", results)
 
-    inputs = test_generator[0]
-    labels = test_generator.class_indices.keys()
-    predictions = model.predict(test_generator)
-    visualize_results(inputs, predictions, labels, 'benign', 'malignant')
+    # inputs = test_generator[0]
+    # labels = test_generator.class_indices.keys()
+    # predictions = model.predict(test_generator)
+    # visualize_results(inputs, predictions, labels, 'benign', 'malignant')
     
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
