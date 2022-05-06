@@ -107,7 +107,7 @@ def main():
             Dense(128, activation='relu'),
             Dense(1,  activation='relu'),
         ])
-    inputs = test_generator[0] 
+    inputs = np.shape(test_generator[0]) 
     print(inputs)
     labels = test_generator[1]
     print(labels)
