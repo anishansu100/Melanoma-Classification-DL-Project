@@ -108,7 +108,7 @@ def main():
             Dense(1,  activation='relu'),
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
-    print(train_generator[0][0:100])
+    print(train_generator[0][0:100][0])
     # model.fit(train_generator[0][0:100],
     #     batch_size = 10,
     #     epochs=2)
