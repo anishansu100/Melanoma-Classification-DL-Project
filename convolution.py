@@ -109,6 +109,8 @@ def main():
         ])
     inputs = test_generator[0] 
     print(inputs)
+    labels = test_generator[1]
+    print(labels)
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     tensorboard = TensorBoard(log_dir="run1")
     model.fit(train_generator,
