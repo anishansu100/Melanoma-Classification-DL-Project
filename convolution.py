@@ -107,20 +107,22 @@ def main():
             Dense(128, activation='relu'),
             Dense(1,  activation='relu'),
         ])
-
-
+    inputs = test_generator[0] 
+    print(inputs)
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
+    tensorboard = TensorBoard(log_dir="run1")
     model.fit(train_generator,
         batch_size = 500,
         epochs=2)
     model.summary() 
+    
     visualizer(model, format='png', view=True)
     
     print("Evaluate model on test data")
     results = model.evaluate(test_generator, batch_size=500)
     print("test loss, test acc:", results)
 
-
+    visualize_results(test_generator)
     
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
