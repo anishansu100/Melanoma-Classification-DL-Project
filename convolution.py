@@ -107,12 +107,7 @@ def main():
             Dense(128, activation='relu'),
             Dense(1,  activation='relu'),
         ])
-    inputs = np.shape(test_generator[0]) 
-    print(inputs)
-    labels = test_generator[1]
-    print(labels)
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
-    tensorboard = TensorBoard(log_dir="run1")
     model.fit(train_generator,
         batch_size = 500,
         epochs=2)
@@ -124,7 +119,10 @@ def main():
     results = model.evaluate(test_generator, batch_size=500)
     print("test loss, test acc:", results)
 
-    visualize_results(test_generator)
+    inputs = test_generator[0]
+    labels = test_generator.class_indices.keys()
+    predictions = model.predict(test_generator)
+    visualize_results(inputs, predictions, labels, 'benign', 'malignant')
     
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
