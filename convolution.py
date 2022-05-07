@@ -102,8 +102,8 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     shape (num_labels, num_classes)
     :return: Optionally list of losses per batch to use for visualize_loss
     '''
-    train_acc_metric = keras.metrics.BinaryAccuracy()
-    train_auc_metric = keras.metrics.AUC()
+    train_acc_metric = BinaryAccuracy()
+    train_auc_metric = AUC()
     # Intializes inputs and labels
     for step, (x_batch_train, y_batch_train) in enumerate(train_inputs):
         print(step)
