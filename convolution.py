@@ -108,7 +108,7 @@ def main():
             MaxPool2D(2, padding="same"),
             Flatten(),
             Dropout(0.3),
-            Dense(2, activation='relu')
+            Dense(1, activation='relu')
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     model.fit(train_generator,
