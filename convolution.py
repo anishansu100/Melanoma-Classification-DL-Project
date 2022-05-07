@@ -128,7 +128,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
         train_acc_metric.update_state(y_batch_train, logits)
         train_auc_metric.update_state(y_batch_train, logits)
         # Log every 200 batches.
-        if step % 29 == 0:
+        if step % 29 == 1:
             print(
                 "Training loss (for one batch) at step %d: %.4f"
                 % (step, float(loss_value))
