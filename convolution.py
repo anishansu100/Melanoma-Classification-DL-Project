@@ -106,6 +106,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     train_auc_metric = keras.metrics.AUC()
     # Intializes inputs and labels
     for step, (x_batch_train, y_batch_train) in enumerate(train_inputs):
+        print(step)
         # # Open a GradientTape to record the operations run
         # # during the forward pass, which enables auto-differentiation.
         # with tf.GradientTape() as tape:
@@ -141,7 +142,6 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     # # Reset training metrics at the end of each epoch
     # train_acc_metric.reset_states()
     # train_auc_metric.reset_states()
-    print(step)
 
 def test(model, test_inputs, test_labels):
     """
