@@ -105,8 +105,10 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     train_acc_metric = BinaryAccuracy()
     train_auc_metric = AUC()
     # Intializes inputs and labels
+    total = 0
     for step, (x_batch_train, y_batch_train) in enumerate(train_inputs):
         print(step)
+        total = total + step
         # # Open a GradientTape to record the operations run
         # # during the forward pass, which enables auto-differentiation.
         # with tf.GradientTape() as tape:
@@ -133,7 +135,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
         #     )
         #     print("Seen so far: %s samples" % ((step + 1) * 50))
     # Display metrics at the end of each epoch.
-
+    print("epoch %i",  total)
     # train_acc = train_acc_metric.result()
     # train_auc = train_auc_metric.result()
 
