@@ -25,7 +25,7 @@ class Model(tf.keras.Model):
         for you to fill out, but you are welcome to change them if you'd like.
         """
         super(Model, self).__init__()
-
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
         self.model = Sequential([
             BatchNormalization(),
             Conv2D(4, 3, 3, activation="relu", padding="same"),
@@ -118,7 +118,7 @@ def train(model, train_inputs):
             loss_value = model.loss(y_batch_train, logits)
             print(loss_value)
         gradient = tape.gradient(loss_value, model.trainable_variables)
-        model.a_optimizer.apply_gradients(zip(gradient, model.trainable_variables))
+        model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
         # Log every 200 batches.
         if step % 200 == 0:
             print(
