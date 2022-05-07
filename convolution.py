@@ -9,7 +9,7 @@ import random
 import math
 from keras_visualizer import visualizer 
 from tensorflow.keras import Sequential
-from tensorflow.keras.losses import SparseCategoricalCrossentropy
+from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.math import exp, sqrt
@@ -67,7 +67,7 @@ class Model(tf.keras.Model):
         :param labels: during training, matrix of shape (batch_size, self.num_classes) containing the train labels
         :return: the loss of the model as a Tensor
         """
-        loss_fn = SparseCategoricalCrossentropy(from_logits=True)
+        loss_fn = BinaryCrossentropy(from_logits=True)
         return loss_fn(labels, logits)
 
     def accuracy(self, logits, labels):
@@ -107,13 +107,13 @@ def train(model, train_inputs):
         # during the forward pass, which enables auto-differentiation.
         with tf.GradientTape() as tape:
             print(x_batch_train.shape)
-            print(y_batch_train.shape)
+            print(y_batch_train)
             # Run the forward pass of the layer.
             # The operations that the layer applies
             # to its inputs are going to be recorded
             # on the GradientTape.
             logits = model(x_batch_train, training=True)  # Logits for this minibatch
-
+            
             # Compute the loss value for this minibatch.
             loss_value = model.loss(y_batch_train, logits)
             print(loss_value)
