@@ -106,9 +106,10 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     train_auc_metric = AUC()
     # Intializes inputs and labels
     total = 0
-    print(train_inputs)
+    print(len(train_inputs))
     for step, (x_batch_train, y_batch_train) in enumerate(train_inputs):
         print(step)
+        print()
         total = total + step
         # # Open a GradientTape to record the operations run
         # # during the forward pass, which enables auto-differentiation.
