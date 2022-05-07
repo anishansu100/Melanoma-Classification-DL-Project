@@ -256,7 +256,7 @@ def main():
             Dropout(0.3),
             GlobalAveragePooling2D(),
             Flatten(),
-            Dense(1, activation='softmax')
+            Dense(2, activation='softmax')
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     model.summary()
