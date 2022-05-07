@@ -118,11 +118,6 @@ def main():
     print("Evaluate model on test data")
     results = model.evaluate(test_generator, batch_size=50)
     print("test loss, test acc:", results)
-
-    inputs = test_generator[0]
-    labels = test_generator.class_indices.keys()
-    predictions = model.predict(test_generator)
-    visualize_results(inputs, predictions, labels, 'benign', 'malignant')
     
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
