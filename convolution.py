@@ -241,7 +241,7 @@ def main():
     '''
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     model  = Sequential([
-            InputLayer(input_shape=(200, 400, 3), batch_size=50),
+            InputLayer(input_shape=(200, 400, 3)),
             BatchNormalization(),
             Conv2D(4, 3, 1, activation="relu", padding="valid"),
             Conv2D(4, 3, 1, activation="relu", padding="valid"),
@@ -256,7 +256,7 @@ def main():
             Dropout(0.3),
             GlobalAveragePooling2D(),
             Flatten(),
-            Dense(2, activation='softmax')
+            Dense(1, activation='softmax')
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     model.summary()
