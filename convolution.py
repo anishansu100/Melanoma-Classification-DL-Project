@@ -109,7 +109,9 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     print(len(train_inputs))
     for step in range(len(train_inputs)):
         print(step)
-        print(train_inputs[step])
+        x_batch_train, y_batch_train = train_inputs[step]
+        print( x_batch_train)
+        print(y_batch_train)
         # # Open a GradientTape to record the operations run
         # # during the forward pass, which enables auto-differentiation.
         # with tf.GradientTape() as tape:
