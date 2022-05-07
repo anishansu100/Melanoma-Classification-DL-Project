@@ -10,6 +10,7 @@ import math
 from keras_visualizer import visualizer 
 from tensorflow.keras import Sequential
 from tensorflow.keras.losses import BinaryCrossentropy
+from keras.metrics import BinaryAccuracy, AUC
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.math import exp, sqrt
@@ -25,7 +26,7 @@ class Model(tf.keras.Model):
         for you to fill out, but you are welcome to change them if you'd like.
         """
         super(Model, self).__init__()
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
         self.model = Sequential([
             BatchNormalization(),
             Conv2D(4, 3, 3, activation="relu", padding="same"),
@@ -38,8 +39,9 @@ class Model(tf.keras.Model):
             Conv2D(32, 3, 3, activation="relu", padding="same"),
             Conv2D(32, 3, 3, activation="relu", padding="same"),
             MaxPool2D(2, padding="same"),
-            Flatten(),
             Dropout(0.3),
+            GlobalAveragePooling2D(),
+            Flatten(),
             Dense(1, activation='softmax')
         ])
 
@@ -86,7 +88,7 @@ class Model(tf.keras.Model):
         correct_predictions = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
         return tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
 
-def train(model, train_inputs):
+def train(model, train_inputs, train_acc_metric, train_auc_metric):
     '''
     Trains the model on all of the inputs and labels for one epoch. You should shuffle your inputs 
     and labels - ensure that they are shuffled in the same order using tf.gather or zipping.
@@ -100,30 +102,46 @@ def train(model, train_inputs):
     shape (num_labels, num_classes)
     :return: Optionally list of losses per batch to use for visualize_loss
     '''
+    train_acc_metric = keras.metrics.BinaryAccuracy()
+    train_auc_metric = keras.metrics.AUC()
     # Intializes inputs and labels
     for step, (x_batch_train, y_batch_train) in enumerate(train_inputs):
+        # # Open a GradientTape to record the operations run
+        # # during the forward pass, which enables auto-differentiation.
+        # with tf.GradientTape() as tape:
+        #     # Run the forward pass of the layer.
+        #     # The operations that the layer applies
+        #     # to its inputs are going to be recorded
+        #     # on the GradientTape.
+        #     logits = model(x_batch_train, training=True)  # Logits for this minibatch
+        #     # Compute the loss value for this minibatch.
+        #     y_batch_train = np.expand_dims(y_batch_train, axis = 1)
+        #     loss_value = model.loss(y_batch_train, logits)
+        #     print(loss_value)
+        # gradient = tape.gradient(loss_value, model.trainable_variables)
+        # model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
 
-        # Open a GradientTape to record the operations run
-        # during the forward pass, which enables auto-differentiation.
-        with tf.GradientTape() as tape:
-            # Run the forward pass of the layer.
-            # The operations that the layer applies
-            # to its inputs are going to be recorded
-            # on the GradientTape.
-            logits = model(x_batch_train, training=True)  # Logits for this minibatch
-            # Compute the loss value for this minibatch.
-            y_batch_train = np.expand_dims(y_batch_train, axis = 1)
-            loss_value = model.loss(y_batch_train, logits)
-            print(loss_value)
-        gradient = tape.gradient(loss_value, model.trainable_variables)
-        model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
-        # Log every 200 batches.
-        if step % 20 == 0:
-            print(
-                "Training loss (for one batch) at step %d: %.4f"
-                % (step, float(loss_value))
-            )
-            print("Seen so far: %s samples" % ((step + 1) * 50))
+        # # Update training metric.
+        # train_acc_metric.update_state(y_batch_train, logits)
+        # train_auc_metric.update_state(y_batch_train, logits)
+        # # Log every 200 batches.
+        # if step % 29 == 0:
+        #     print(
+        #         "Training loss (for one batch) at step %d: %.4f"
+        #         % (step, float(loss_value))
+        #     )
+        #     print("Seen so far: %s samples" % ((step + 1) * 50))
+    # Display metrics at the end of each epoch.
+
+    # train_acc = train_acc_metric.result()
+    # train_auc = train_auc_metric.result()
+
+    # print("Training acc over epoch: %.4f" % (float(train_acc),))
+    # print("Training auc over epoch: %.4f" % (float(train_auc),))
+    # # Reset training metrics at the end of each epoch
+    # train_acc_metric.reset_states()
+    # train_auc_metric.reset_states()
+    print(step)
 
 def test(model, test_inputs, test_labels):
     """
@@ -241,8 +259,10 @@ def main():
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     model = Model()
     epoches = 20
+    train_acc_metric = keras.metrics.BinaryAccuracy()
+    train_auc_metric = keras.metrics.AUC()
     for i in range(epoches):
-        train(model, train_generator)
+        train(model, train_generator, train_acc_metric, train_auc_metric)
     
     # visualizer(model, format='png', view=True)
     
