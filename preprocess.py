@@ -3,10 +3,10 @@ from keras.preprocessing.image import ImageDataGenerator
 def get_data(file_path):
 	# Initialising the generators for train and test data
 	# The rescale parameter ensures the input range in [0, 1] 
-	train_datagen = ImageDataGenerator(rescale = 1./255, rotation_range=10, validation_split=0.2)
+	train_datagen = ImageDataGenerator(rescale = 1./255, validation_split=0.2)
 	train_generator = train_datagen.flow_from_directory(
                   '/home/anish_pradhan/Melanoma-Classification-DL-Project/train',
-                  target_size =(200, 200),  # target_size = input image size
+                  target_size =(200, 400),  # target_size = input image size
 				  color_mode="rgb", # for coloured images
                   batch_size = 50,
 				  shuffle=True,
@@ -14,12 +14,12 @@ def get_data(file_path):
                   class_mode ='binary')
 	test_generator = train_datagen.flow_from_directory(
                   '/home/anish_pradhan/Melanoma-Classification-DL-Project/train',
-                  target_size =(200, 200),  # target_size = input image size
+                  target_size =(200, d00),  # target_size = input image size
 				  color_mode="rgb", # for coloured images
                   batch_size = 50,
 				  shuffle=True,
 				  subset = 'validation',
                   class_mode ='binary') 
-	print(train_generator.class_indices)
+	print(train_generator[0][0])
 	return train_generator, test_generator
 	

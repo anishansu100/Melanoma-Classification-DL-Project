@@ -1,4 +1,6 @@
 from __future__ import absolute_import
+from functools import total_ordering
+from turtle import st
 from matplotlib import pyplot as plt
 from preprocess import get_data
 
@@ -33,22 +35,26 @@ class Model(tf.keras.Model):
 
         # Create pre-trained ResNet50 without top layer
         model_resnet = ResNet50(include_top=False, weights="imagenet", input_shape=(height, width, channel))
+        for layer in model_resnet.layers:
+                layer.trainable=False
+
         self.model = Sequential([
             BatchNormalization(),
             Conv2D(4, 3, 3, activation="relu", padding="same"),
+            Conv2D(4, 3, 3, activation="relu", padding="same"),
+            Conv2D(8, 3, 3, activation="relu", padding="same"),
             Conv2D(8, 3, 3, activation="relu", padding="same"),
             MaxPool2D(2, padding="same"),
             Conv2D(16, 3, 3, activation="relu", padding="same"),
+            Conv2D(16, 3, 3, activation="relu", padding="same"),
+            Conv2D(32, 3, 3, activation="relu", padding="same"),
             Conv2D(32, 3, 3, activation="relu", padding="same"),
             MaxPool2D(2, padding="same"),
             Dropout(0.3),
-            GlobalAveragePooling2D()
-        ])
-
-        self.dense = [
+            GlobalAveragePooling2D(),
             Flatten(),
             Dense(1, activation='softmax')
-        ]
+        ])
 
 
 
@@ -61,9 +67,7 @@ class Model(tf.keras.Model):
         :param is_testing: a boolean that should be set to True only when you're doing Part 2 of the assignment and this function is being called during testing
         :return: logits - a matrix of shape (num_inputs, num_classes); during training, it would be (batch_size, 2)
         """
-        model1 = self.model(inputs)
-        prob = self.dense(model1)
-        return prob
+        return self.model(inputs)
 
     def loss(self, labels, logits):
         """
@@ -120,11 +124,10 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
             # The operations that the layer applies
             # to its inputs are going to be recorded
             # on the GradientTape.
-            logits = model(x_batch_train, training=True)  # Logits for this minibatch
+            logits = model.call(x_batch_train)  # Logits for this minibatch
             # Compute the loss value for this minibatch.
             y_batch_train = np.expand_dims(y_batch_train, axis = 1)
             loss_value = model.loss(y_batch_train, logits)
-            print(loss_value)
         gradient = tape.gradient(loss_value, model.trainable_variables)
         model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
 
@@ -148,7 +151,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     train_acc_metric.reset_states()
     train_auc_metric.reset_states()
 
-def test(model, test_inputs, test_labels):
+def test(model, test_inputs):
     """
     Tests the model on the test inputs and labels. You should NOT randomly 
     flip images or do any extra preprocessing.
@@ -160,7 +163,12 @@ def test(model, test_inputs, test_labels):
     :return: test accuracy - this should be the average accuracy across
     all batchesc
     """
-    return model.accuracy(model.call(test_inputs, True), test_labels)
+    total_accuracy = np.array((29, 1))
+    for step in range(len(test_inputs)):    
+        x_batch_test, y_batch_test = test_inputs[step]
+        accuracy = model.accuracy(model.call(x_batch_test, True), y_batch_test)
+        total_accuracy[step] = accuracy
+    return np.average()
 
 def visualize_loss(losses): 
     """
@@ -263,13 +271,14 @@ def main():
     # model.summary() 
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     model = Model()
-    epoches = 20
+    epoches = 10
     train_acc_metric = BinaryAccuracy()
     train_auc_metric = AUC()
     for i in range(epoches):
         print('epoch: ', i)
         train(model, train_generator, train_acc_metric, train_auc_metric)
     
+    test(model, test_generator)
     # visualizer(model, format='png', view=True)
     
     # print("Evaluate model on test data")
