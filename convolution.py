@@ -14,7 +14,7 @@ from tensorflow.keras.metrics import BinaryAccuracy, AUC
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.math import exp, sqrt
- 
+from tensorflow.keras.applications import ResNet50
 
 
 
@@ -27,20 +27,25 @@ class Model(tf.keras.Model):
         """
         super(Model, self).__init__()
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
+        height = 100 #dimensions of image
+        width = 100
+        channel = 3 #RGB
+
+        # Create pre-trained ResNet50 without top layer
+        model_resnet = ResNet50(include_top=False, weights="imagenet", input_shape=(height, width, channel))
         self.model = Sequential([
             BatchNormalization(),
             Conv2D(4, 3, 3, activation="relu", padding="same"),
-            Conv2D(4, 3, 3, activation="relu", padding="same"),
-            Conv2D(8, 3, 3, activation="relu", padding="same"),
             Conv2D(8, 3, 3, activation="relu", padding="same"),
             MaxPool2D(2, padding="same"),
             Conv2D(16, 3, 3, activation="relu", padding="same"),
-            Conv2D(16, 3, 3, activation="relu", padding="same"),
-            Conv2D(32, 3, 3, activation="relu", padding="same"),
             Conv2D(32, 3, 3, activation="relu", padding="same"),
             MaxPool2D(2, padding="same"),
             Dropout(0.3),
-            GlobalAveragePooling2D(),
+            GlobalAveragePooling2D()
+        ])
+
+        self.dense = ([
             Flatten(),
             Dense(1, activation='softmax')
         ])
@@ -56,8 +61,9 @@ class Model(tf.keras.Model):
         :param is_testing: a boolean that should be set to True only when you're doing Part 2 of the assignment and this function is being called during testing
         :return: logits - a matrix of shape (num_inputs, num_classes); during training, it would be (batch_size, 2)
         """
-        
-        return self.model(inputs)
+        model1 = self.model(inputs)
+        prob = self.dense(model1)
+        return prob
 
     def loss(self, labels, logits):
         """
@@ -105,8 +111,6 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     train_acc_metric = BinaryAccuracy()
     train_auc_metric = AUC()
     # Intializes inputs and labels
-    total = 0
-    print(len(train_inputs))
     for step in range(len(train_inputs)):
         x_batch_train, y_batch_train = train_inputs[step]
         # Open a GradientTape to record the operations run
@@ -128,7 +132,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
         train_acc_metric.update_state(y_batch_train, logits)
         train_auc_metric.update_state(y_batch_train, logits)
         # Log every 200 batches.
-        if step % 29 == 1:
+        if step == 29:
             print(
                 "Training loss (for one batch) at step %d: %.4f"
                 % (step, float(loss_value))
