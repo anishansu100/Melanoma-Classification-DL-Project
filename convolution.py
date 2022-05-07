@@ -10,7 +10,7 @@ import math
 from keras_visualizer import visualizer 
 from tensorflow.keras import Sequential
 from tensorflow.keras.losses import BinaryCrossentropy
-from keras.metrics import BinaryAccuracy, AUC
+from tensorflow.keras.metrics import BinaryAccuracy, AUC
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.math import exp, sqrt
