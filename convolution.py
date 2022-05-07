@@ -107,8 +107,8 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     # Intializes inputs and labels
     total = 0
     print(len(train_inputs))
-    for step in enumerate(train_inputs):
-        print(step)
+    for step, (x_batch_train, y_batch_train) in enumerate(train_inputs):
+        print(step, (x_batch_train, y_batch_train))
         print()
         total = total + step
         # # Open a GradientTape to record the operations run
