@@ -28,16 +28,6 @@ class Model(tf.keras.Model):
         for you to fill out, but you are welcome to change them if you'd like.
         """
         super(Model, self).__init__()
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
-        height = 100 #dimensions of image
-        width = 100
-        channel = 3 #RGB
-
-        # Create pre-trained ResNet50 without top layer
-        model_resnet = ResNet50(include_top=False, weights="imagenet", input_shape=(height, width, channel))
-        for layer in model_resnet.layers:
-                layer.trainable=False
-
         self.model = Sequential([
             BatchNormalization(),
             Conv2D(4, 3, 2, activation="relu", padding="valid"),
@@ -249,38 +239,39 @@ def main():
     
     :return: None
     '''
-    # train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
-    # model = Sequential([
-    #         BatchNormalization(),
-    #         Conv2D(4, 3, 3, activation="relu", padding="same"),
-    #         Conv2D(4, 3, 3, activation="relu", padding="same"),
-    #         Conv2D(8, 3, 3, activation="relu", padding="same"),
-    #         Conv2D(8, 3, 3, activation="relu", padding="same"),
-    #         MaxPool2D(2, padding="same"),
-    #         Conv2D(16, 3, 3, activation="relu", padding="same"),
-    #         Conv2D(16, 3, 3, activation="relu", padding="same"),
-    #         Conv2D(32, 3, 3, activation="relu", padding="same"),
-    #         Conv2D(32, 3, 3, activation="relu", padding="same"),
-    #         MaxPool2D(2, padding="same"),
-    #         Flatten(),
-    #         Dropout(0.3),
-    #         Dense(1, activation='softmax')
-    #     ])
-    # model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
-    # model.fit(train_generator,
-    #     batch_size = 50,
-    #     epochs=10)
-    # model.summary() 
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
-    model = Model()
-    epoches = 10
-    train_acc_metric = BinaryAccuracy()
-    train_auc_metric = AUC()
-    for i in range(epoches):
-        print('epoch: ', i)
-        train(model, train_generator, train_acc_metric, train_auc_metric)
+    model  = Sequential([
+            BatchNormalization(),
+            Conv2D(4, 3, 2, activation="relu", padding="valid"),
+            Conv2D(4, 3, 2, activation="relu", padding="valid"),
+            Conv2D(8, 3, 2, activation="relu", padding="valid"),
+            Conv2D(8, 3, 2, activation="relu", padding="valid"),
+            MaxPool2D(2, padding="same"),
+            Conv2D(16, 3, 2, activation="relu", padding="valid"),
+            Conv2D(16, 3, 2, activation="relu", padding="valid"),
+            Conv2D(32, 3, 2, activation="relu", padding="valid"),
+            Conv2D(32, 3, 2, activation="relu", padding="valid"),
+            MaxPool2D(2, padding="same"),
+            Dropout(0.3),
+            GlobalAveragePooling2D(),
+            Flatten(),
+            Dense(1, activation='softmax')
+        ])
+    model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
+    model.fit(train_generator,
+        batch_size = 50,
+        epochs=10)
+    model.summary() 
+    # train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
+    # model = Model()
+    # epoches = 10
+    # train_acc_metric = BinaryAccuracy()
+    # train_auc_metric = AUC()
+    # for i in range(epoches):
+    #     print('epoch: ', i)
+    #     train(model, train_generator, train_acc_metric, train_auc_metric)
     
-    test(model, test_generator)
+    # test(model, test_generator)
     # visualizer(model, format='png', view=True)
     
     # print("Evaluate model on test data")
