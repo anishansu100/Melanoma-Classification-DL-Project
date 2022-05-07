@@ -14,7 +14,7 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import BinaryAccuracy, AUC
 from tensorflow.keras.layers import \
-    Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
+    Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization, InputLayer
 from tensorflow.math import exp, sqrt
 from tensorflow.keras.applications import ResNet50
 
@@ -241,6 +241,7 @@ def main():
     '''
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     model  = Sequential([
+            InputLayer(input_shape=(200, 400, 3), batch_size=50),
             BatchNormalization(),
             Conv2D(4, 3, 1, activation="relu", padding="valid"),
             Conv2D(4, 3, 1, activation="relu", padding="valid"),
@@ -258,10 +259,10 @@ def main():
             Dense(1, activation='softmax')
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
+    model.summary()
     model.fit(train_generator,
         batch_size = 50,
         epochs=10)
-    model.summary()
     # train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     # model = Model()
     # epoches = 10
