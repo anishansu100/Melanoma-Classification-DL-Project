@@ -16,6 +16,127 @@ from tensorflow.math import exp, sqrt
 
 
 
+class Model(tf.keras.Model):
+    def __init__(self):
+        """
+        This model class will contain the architecture for your CNN that 
+        classifies images. We have left in variables in the constructor
+        for you to fill out, but you are welcome to change them if you'd like.
+        """
+        super(Model, self).__init__()
+
+        self.model = Sequential([
+            BatchNormalization(),
+            Conv2D(4, 3, 3, activation="relu", padding="same"),
+            Conv2D(4, 3, 3, activation="relu", padding="same"),
+            Conv2D(8, 3, 3, activation="relu", padding="same"),
+            Conv2D(8, 3, 3, activation="relu", padding="same"),
+            MaxPool2D(2, padding="same"),
+            Conv2D(16, 3, 3, activation="relu", padding="same"),
+            Conv2D(16, 3, 3, activation="relu", padding="same"),
+            Conv2D(32, 3, 3, activation="relu", padding="same"),
+            Conv2D(32, 3, 3, activation="relu", padding="same"),
+            MaxPool2D(2, padding="same"),
+            Flatten(),
+            Dropout(0.3),
+            Dense(1, activation='softmax')
+        ])
+
+
+
+    def call(self, inputs):
+
+        """
+        Runs a forward pass on an input batch of images.
+        
+        :param inputs: images, shape of (num_inputs, 32, 32, 3); during training, the shape is (batch_size, 32, 32, 3)
+        :param is_testing: a boolean that should be set to True only when you're doing Part 2 of the assignment and this function is being called during testing
+        :return: logits - a matrix of shape (num_inputs, num_classes); during training, it would be (batch_size, 2)
+        """
+        
+        return self.model(inputs)
+
+    def loss(self, logits, labels):
+        """
+        Calculates the model cross-entropy loss after one forward pass.
+        Softmax is applied in this function.
+        
+        :param logits: during training, a matrix of shape (batch_size, self.num_classes) 
+        containing the result of multiple convolution and feed forward layers
+        :param labels: during training, matrix of shape (batch_size, self.num_classes) containing the train labels
+        :return: the loss of the model as a Tensor
+        """
+        return tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels, logits))
+
+    def accuracy(self, logits, labels):
+        """
+        Calculates the model's prediction accuracy by comparing
+        logits to correct labels – no need to modify this.
+        
+        :param logits: a matrix of size (num_inputs, self.num_classes); during training, this will be (batch_size, self.num_classes)
+        containing the result of multiple convolution and feed forward layers
+        :param labels: matrix of size (num_labels, self.num_classes) containing the answers, during training, this will be (batch_size, self.num_classes)
+
+        NOTE: DO NOT EDIT
+        
+        :return: the accuracy of the model as a Tensor
+        """
+        correct_predictions = tf.equal(tf.argmax(logits, 1), tf.argmax(labels, 1))
+        return tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
+
+def train(model, train_inputs):
+    '''
+    Trains the model on all of the inputs and labels for one epoch. You should shuffle your inputs 
+    and labels - ensure that they are shuffled in the same order using tf.gather or zipping.
+    To increase accuracy, you may want to use tf.image.random_flip_left_right on your
+    inputs before doing the forward pass. You should batch your inputs.
+    
+    :param model: the initialized model to use for the forward pass and backward pass
+    :param train_inputs: train inputs (all inputs to use for training), 
+    shape (num_inputs, width, height, num_channels)
+    :param train_labels: train labels (all labels to use for training), 
+    shape (num_labels, num_classes)
+    :return: Optionally list of losses per batch to use for visualize_loss
+    '''
+    # Intializes inputs and labels
+    for step, (x_batch_train, y_batch_train) in enumerate(train_inputs):
+
+        # Open a GradientTape to record the operations run
+        # during the forward pass, which enables auto-differentiation.
+        with tf.GradientTape() as tape:
+
+            # Run the forward pass of the layer.
+            # The operations that the layer applies
+            # to its inputs are going to be recorded
+            # on the GradientTape.
+            logits = model(x_batch_train, training=True)  # Logits for this minibatch
+
+            # Compute the loss value for this minibatch.
+            loss_value = model.loss(y_batch_train, logits)
+        gradient = tape.gradient(loss_value, model.trainable_variables)
+        model.a_optimizer.apply_gradients(zip(gradient, model.trainable_variables))
+        # Log every 200 batches.
+        if step % 200 == 0:
+            print(
+                "Training loss (for one batch) at step %d: %.4f"
+                % (step, float(loss_value))
+            )
+            print("Seen so far: %s samples" % ((step + 1) * 50))
+
+def test(model, test_inputs, test_labels):
+    """
+    Tests the model on the test inputs and labels. You should NOT randomly 
+    flip images or do any extra preprocessing.
+    
+    :param test_inputs: test data (all images to be tested), 
+    shape (num_inputs, width, height, num_channels)
+    :param test_labels: test labels (all corresponding labels),
+    shape (num_labels, num_classes)
+    :return: test accuracy - this should be the average accuracy across
+    all batchesc
+    """
+    return model.accuracy(model.call(test_inputs, True), test_labels)
+
 def visualize_loss(losses): 
     """
     Uses Matplotlib to visualize the losses of our model.
@@ -93,34 +214,39 @@ def main():
     
     :return: None
     '''
+    # train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
+    # model = Sequential([
+    #         BatchNormalization(),
+    #         Conv2D(4, 3, 3, activation="relu", padding="same"),
+    #         Conv2D(4, 3, 3, activation="relu", padding="same"),
+    #         Conv2D(8, 3, 3, activation="relu", padding="same"),
+    #         Conv2D(8, 3, 3, activation="relu", padding="same"),
+    #         MaxPool2D(2, padding="same"),
+    #         Conv2D(16, 3, 3, activation="relu", padding="same"),
+    #         Conv2D(16, 3, 3, activation="relu", padding="same"),
+    #         Conv2D(32, 3, 3, activation="relu", padding="same"),
+    #         Conv2D(32, 3, 3, activation="relu", padding="same"),
+    #         MaxPool2D(2, padding="same"),
+    #         Flatten(),
+    #         Dropout(0.3),
+    #         Dense(1, activation='softmax')
+    #     ])
+    # model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
+    # model.fit(train_generator,
+    #     batch_size = 50,
+    #     epochs=10)
+    # model.summary() 
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
-    model = Sequential([
-            BatchNormalization(),
-            Conv2D(4, 3, 3, activation="relu", padding="same"),
-            Conv2D(4, 3, 3, activation="relu", padding="same"),
-            Conv2D(8, 3, 3, activation="relu", padding="same"),
-            Conv2D(8, 3, 3, activation="relu", padding="same"),
-            MaxPool2D(2, padding="same"),
-            Conv2D(16, 3, 3, activation="relu", padding="same"),
-            Conv2D(16, 3, 3, activation="relu", padding="same"),
-            Conv2D(32, 3, 3, activation="relu", padding="same"),
-            Conv2D(32, 3, 3, activation="relu", padding="same"),
-            MaxPool2D(2, padding="same"),
-            Flatten(),
-            Dropout(0.3),
-            Dense(1, activation='relu')
-        ])
-    model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
-    model.fit(train_generator,
-        batch_size = 50,
-        epochs=10)
-    model.summary() 
+    model = Model()
+    epoches = 20
+    for i in range(epoches):
+        train(model, train_generator)
     
-    visualizer(model, format='png', view=True)
+    # visualizer(model, format='png', view=True)
     
-    print("Evaluate model on test data")
-    results = model.evaluate(test_generator, batch_size=50)
-    print("test loss, test acc:", results)
+    # print("Evaluate model on test data")
+    # results = model.evaluate(test_generator, batch_size=50)
+    # print("test loss, test acc:", results)
     
     # # Training Inputs
     # train_inputs, train_labels = get_data("/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/preprocess.py",3, 5)
