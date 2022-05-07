@@ -9,6 +9,7 @@ import random
 import math
 from keras_visualizer import visualizer 
 from tensorflow.keras import Sequential
+from tensorflow.keras.losses import SparseCategoricalCrossentropy
 from tensorflow.keras.layers import \
     Conv2D, MaxPool2D, Dropout, Flatten, Dense, GlobalAveragePooling2D, BatchNormalization
 from tensorflow.math import exp, sqrt
@@ -56,7 +57,7 @@ class Model(tf.keras.Model):
         
         return self.model(inputs)
 
-    def loss(self, logits, labels):
+    def loss(self, labels, logits):
         """
         Calculates the model cross-entropy loss after one forward pass.
         Softmax is applied in this function.
@@ -66,7 +67,8 @@ class Model(tf.keras.Model):
         :param labels: during training, matrix of shape (batch_size, self.num_classes) containing the train labels
         :return: the loss of the model as a Tensor
         """
-        return tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels, logits))
+        loss_fn = SparseCategoricalCrossentropy(from_logits=True)
+        return loss_fn(labels, logits)
 
     def accuracy(self, logits, labels):
         """
@@ -104,7 +106,8 @@ def train(model, train_inputs):
         # Open a GradientTape to record the operations run
         # during the forward pass, which enables auto-differentiation.
         with tf.GradientTape() as tape:
-
+            print(x_batch_train.shape)
+            print(y_batch_train.shape)
             # Run the forward pass of the layer.
             # The operations that the layer applies
             # to its inputs are going to be recorded
@@ -113,6 +116,7 @@ def train(model, train_inputs):
 
             # Compute the loss value for this minibatch.
             loss_value = model.loss(y_batch_train, logits)
+            print(loss_value)
         gradient = tape.gradient(loss_value, model.trainable_variables)
         model.a_optimizer.apply_gradients(zip(gradient, model.trainable_variables))
         # Log every 200 batches.
