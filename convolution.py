@@ -259,8 +259,8 @@ def main():
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     model = Model()
     epoches = 20
-    train_acc_metric = keras.metrics.BinaryAccuracy()
-    train_auc_metric = keras.metrics.AUC()
+    train_acc_metric = BinaryAccuracy()
+    train_auc_metric = AUC()
     for i in range(epoches):
         train(model, train_generator, train_acc_metric, train_auc_metric)
     
