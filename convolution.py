@@ -263,7 +263,7 @@ def main():
     train_acc_metric = BinaryAccuracy()
     train_auc_metric = AUC()
     for i in range(epoches):
-        print('epoch: %i', i)
+        print('epoch: ', i)
         train(model, train_generator, train_acc_metric, train_auc_metric)
     
     # visualizer(model, format='png', view=True)
