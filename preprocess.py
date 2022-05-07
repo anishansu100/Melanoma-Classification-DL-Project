@@ -14,7 +14,7 @@ def get_data(file_path):
                   class_mode ='binary')
 	test_generator = train_datagen.flow_from_directory(
                   '/home/anish_pradhan/Melanoma-Classification-DL-Project/train',
-                  target_size =(200, d00),  # target_size = input image size
+                  target_size =(200, 400),  # target_size = input image size
 				  color_mode="rgb", # for coloured images
                   batch_size = 50,
 				  shuffle=True,
