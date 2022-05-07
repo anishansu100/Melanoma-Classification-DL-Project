@@ -106,7 +106,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     train_auc_metric = AUC()
     # Intializes inputs and labels
     total = 0
-    print(len(train_inputs[0]))
+    print(len(train_inputs))
     for step in range(len(train_inputs)):
         print(step)
         total = total + step
