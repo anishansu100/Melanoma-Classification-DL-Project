@@ -5,11 +5,11 @@ from matplotlib import pyplot as plt
 from preprocess import get_data
 
 import os
+from matplotlib import pyplot as plt
 import tensorflow as tf
 import numpy as np
 import random
 import math
-from keras_visualizer import visualizer 
 from tensorflow.keras import Sequential
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import BinaryAccuracy, AUC
@@ -28,7 +28,7 @@ class Model(tf.keras.Model):
         for you to fill out, but you are welcome to change them if you'd like.
         """
         super(Model, self).__init__()
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-2)
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)
         height = 100 #dimensions of image
         width = 100
         channel = 3 #RGB
@@ -40,15 +40,15 @@ class Model(tf.keras.Model):
 
         self.model = Sequential([
             BatchNormalization(),
-            Conv2D(4, 3, 3, activation="relu", padding="same"),
-            Conv2D(4, 3, 3, activation="relu", padding="same"),
-            Conv2D(8, 3, 3, activation="relu", padding="same"),
-            Conv2D(8, 3, 3, activation="relu", padding="same"),
+            Conv2D(4, 3, 2, activation="relu", padding="valid"),
+            Conv2D(4, 3, 2, activation="relu", padding="valid"),
+            Conv2D(8, 3, 2, activation="relu", padding="valid"),
+            Conv2D(8, 3, 2, activation="relu", padding="valid"),
             MaxPool2D(2, padding="same"),
-            Conv2D(16, 3, 3, activation="relu", padding="same"),
-            Conv2D(16, 3, 3, activation="relu", padding="same"),
-            Conv2D(32, 3, 3, activation="relu", padding="same"),
-            Conv2D(32, 3, 3, activation="relu", padding="same"),
+            Conv2D(16, 3, 2, activation="relu", padding="valid"),
+            Conv2D(16, 3, 2, activation="relu", padding="valid"),
+            Conv2D(32, 3, 2, activation="relu", padding="valid"),
+            Conv2D(32, 3, 2, activation="relu", padding="valid"),
             MaxPool2D(2, padding="same"),
             Dropout(0.3),
             GlobalAveragePooling2D(),
@@ -79,7 +79,7 @@ class Model(tf.keras.Model):
         :param labels: during training, matrix of shape (batch_size, self.num_classes) containing the train labels
         :return: the loss of the model as a Tensor
         """
-        loss_fn = BinaryCrossentropy(from_logits=True)
+        loss_fn = BinaryCrossentropy(from_logits=False)
         return loss_fn(labels, logits)
 
     def accuracy(self, logits, labels):
@@ -117,7 +117,8 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     # Intializes inputs and labels
     for step in range(len(train_inputs)):
         x_batch_train, y_batch_train = train_inputs[step]
-        print(x_batch_train.shape)
+        plt.imshow(x_batch_train[step], interpolation='nearest')
+        plt.show()
         # Open a GradientTape to record the operations run
         # during the forward pass, which enables auto-differentiation.
         with tf.GradientTape() as tape:
