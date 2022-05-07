@@ -108,44 +108,41 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     total = 0
     print(len(train_inputs))
     for step in range(len(train_inputs)):
-        print(step)
         x_batch_train, y_batch_train = train_inputs[step]
-        print( x_batch_train)
-        print(y_batch_train)
-        # # Open a GradientTape to record the operations run
-        # # during the forward pass, which enables auto-differentiation.
-        # with tf.GradientTape() as tape:
-        #     # Run the forward pass of the layer.
-        #     # The operations that the layer applies
-        #     # to its inputs are going to be recorded
-        #     # on the GradientTape.
-        #     logits = model(x_batch_train, training=True)  # Logits for this minibatch
-        #     # Compute the loss value for this minibatch.
-        #     y_batch_train = np.expand_dims(y_batch_train, axis = 1)
-        #     loss_value = model.loss(y_batch_train, logits)
-        #     print(loss_value)
-        # gradient = tape.gradient(loss_value, model.trainable_variables)
-        # model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
+        # Open a GradientTape to record the operations run
+        # during the forward pass, which enables auto-differentiation.
+        with tf.GradientTape() as tape:
+            # Run the forward pass of the layer.
+            # The operations that the layer applies
+            # to its inputs are going to be recorded
+            # on the GradientTape.
+            logits = model(x_batch_train, training=True)  # Logits for this minibatch
+            # Compute the loss value for this minibatch.
+            y_batch_train = np.expand_dims(y_batch_train, axis = 1)
+            loss_value = model.loss(y_batch_train, logits)
+            print(loss_value)
+        gradient = tape.gradient(loss_value, model.trainable_variables)
+        model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
 
-        # # Update training metric.
-        # train_acc_metric.update_state(y_batch_train, logits)
-        # train_auc_metric.update_state(y_batch_train, logits)
-        # # Log every 200 batches.
-        # if step % 29 == 0:
-        #     print(
-        #         "Training loss (for one batch) at step %d: %.4f"
-        #         % (step, float(loss_value))
-        #     )
-        #     print("Seen so far: %s samples" % ((step + 1) * 50))
-    # Display metrics at the end of each epoch.
-    # train_acc = train_acc_metric.result()
-    # train_auc = train_auc_metric.result()
+        # Update training metric.
+        train_acc_metric.update_state(y_batch_train, logits)
+        train_auc_metric.update_state(y_batch_train, logits)
+        # Log every 200 batches.
+        if step % 29 == 0:
+            print(
+                "Training loss (for one batch) at step %d: %.4f"
+                % (step, float(loss_value))
+            )
+            print("Seen so far: %s samples" % ((step + 1) * 50))
+    #Display metrics at the end of each epoch.
+    train_acc = train_acc_metric.result()
+    train_auc = train_auc_metric.result()
 
-    # print("Training acc over epoch: %.4f" % (float(train_acc),))
-    # print("Training auc over epoch: %.4f" % (float(train_auc),))
-    # # Reset training metrics at the end of each epoch
-    # train_acc_metric.reset_states()
-    # train_auc_metric.reset_states()
+    print("Training acc over epoch: %.4f" % (float(train_acc),))
+    print("Training auc over epoch: %.4f" % (float(train_auc),))
+    # Reset training metrics at the end of each epoch
+    train_acc_metric.reset_states()
+    train_auc_metric.reset_states()
 
 def test(model, test_inputs, test_labels):
     """
@@ -266,6 +263,7 @@ def main():
     train_acc_metric = BinaryAccuracy()
     train_auc_metric = AUC()
     for i in range(epoches):
+        print('epoch: %i', i)
         train(model, train_generator, train_acc_metric, train_auc_metric)
     
     # visualizer(model, format='png', view=True)
