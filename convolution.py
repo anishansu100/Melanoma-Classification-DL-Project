@@ -118,7 +118,7 @@ def train(model, train_inputs):
         gradient = tape.gradient(loss_value, model.trainable_variables)
         model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
         # Log every 200 batches.
-        if step % 200 == 0:
+        if step % 20 == 0:
             print(
                 "Training loss (for one batch) at step %d: %.4f"
                 % (step, float(loss_value))
