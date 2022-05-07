@@ -45,10 +45,10 @@ class Model(tf.keras.Model):
             GlobalAveragePooling2D()
         ])
 
-        self.dense = ([
+        self.dense = [
             Flatten(),
             Dense(1, activation='softmax')
-        ])
+        ]
 
 
 
