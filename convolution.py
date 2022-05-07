@@ -96,16 +96,19 @@ def main():
     train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     model = Sequential([
             BatchNormalization(),
+            Conv2D(4, 3, 3, activation="relu", padding="same"),
+            Conv2D(4, 3, 3, activation="relu", padding="same"),
+            Conv2D(8, 3, 3, activation="relu", padding="same"),
+            Conv2D(8, 3, 3, activation="relu", padding="same"),
+            MaxPool2D(2, padding="same"),
+            Conv2D(16, 3, 3, activation="relu", padding="same"),
+            Conv2D(16, 3, 3, activation="relu", padding="same"),
             Conv2D(32, 3, 3, activation="relu", padding="same"),
             Conv2D(32, 3, 3, activation="relu", padding="same"),
             MaxPool2D(2, padding="same"),
-            Dropout(0.15),
-            Conv2D(64, 3, 3, activation="relu", padding="same"),
-            Conv2D(64, 3, 3, activation="relu", padding="same"),
-            Dropout(0.15),
             Flatten(),
-            Dense(128, activation='relu'),
-            Dense(1,  activation='softmax'),
+            Dropout(0.3),
+            Dense(2, activation='relu')
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     model.fit(train_generator,
