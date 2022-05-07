@@ -105,7 +105,7 @@ def main():
             Dropout(0.15),
             Flatten(),
             Dense(128, activation='relu'),
-            Dense(1,  activation='relu'),
+            Dense(1,  activation='softmax'),
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     model.fit(train_generator,
