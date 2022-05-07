@@ -106,15 +106,13 @@ def train(model, train_inputs):
         # Open a GradientTape to record the operations run
         # during the forward pass, which enables auto-differentiation.
         with tf.GradientTape() as tape:
-            print(x_batch_train.shape)
-            print(y_batch_train)
             # Run the forward pass of the layer.
             # The operations that the layer applies
             # to its inputs are going to be recorded
             # on the GradientTape.
             logits = model(x_batch_train, training=True)  # Logits for this minibatch
-            
             # Compute the loss value for this minibatch.
+            y_batch_train = np.expand_dims(y_batch_train, axis = 1)
             loss_value = model.loss(y_batch_train, logits)
             print(loss_value)
         gradient = tape.gradient(loss_value, model.trainable_variables)
