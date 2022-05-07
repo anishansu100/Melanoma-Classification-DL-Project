@@ -20,6 +20,6 @@ def get_data(file_path):
 				  shuffle=True,
 				  subset = 'validation',
                   class_mode ='binary') 
-	print(train_generator[0][0])
+				
 	return train_generator, test_generator
 	

@@ -117,6 +117,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     # Intializes inputs and labels
     for step in range(len(train_inputs)):
         x_batch_train, y_batch_train = train_inputs[step]
+        print(x_batch_train.shape)
         # Open a GradientTape to record the operations run
         # during the forward pass, which enables auto-differentiation.
         with tf.GradientTape() as tape:
