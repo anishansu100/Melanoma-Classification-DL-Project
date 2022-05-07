@@ -258,10 +258,10 @@ def main():
             Dense(1, activation='softmax')
         ])
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
+    model.summary()
     model.fit(train_generator,
         batch_size = 50,
         epochs=10)
-    model.summary() 
     # train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
     # model = Model()
     # epoches = 10
