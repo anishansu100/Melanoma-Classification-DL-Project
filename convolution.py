@@ -196,7 +196,7 @@ def main():
     
     :return: None
     '''
-    train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train', '/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train', True)
+    train_generator, test_generator =  get_data('/home/anish_pradhan/Melanoma-Classification-DL-Project/train', '/home/anish_pradhan/Melanoma-Classification-DL-Project/train', True)
     model = Model()
     epoches = 1
     for i in range(epoches):
