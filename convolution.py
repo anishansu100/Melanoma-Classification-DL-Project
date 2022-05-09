@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from pickle import TRUE
 from matplotlib import pyplot as plt
 from preprocess import get_data
 
@@ -195,7 +196,7 @@ def main():
     
     :return: None
     '''
-    train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train', )
+    train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train', '/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train', True)
     model = Model()
     epoches = 1
     for i in range(epoches):
