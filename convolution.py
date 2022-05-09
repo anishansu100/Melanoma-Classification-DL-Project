@@ -127,12 +127,11 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
         train_acc_metric.update_state(y_batch_train, logits)
         train_auc_metric.update_state(y_batch_train, logits)
         # Log every 200 batches.
-        if step == 29:
-            print(
+        print(
                 "Training loss (for one batch) at step %d: %.4f"
                 % (step, float(loss_value))
             )
-            print("Seen so far: %s samples" % ((step + 1) * 50))
+        print("Seen so far: %s samples" % ((step + 1) * 50))
     #Display metrics at the end of each epoch.
     train_acc = train_acc_metric.result()
     train_auc = train_auc_metric.result()
