@@ -66,7 +66,7 @@ def main():
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
     history = model.fit(train_generator,
         batch_size= 50,
-        epochs=10,
+        epochs=1,
         shuffle=True)
     visualize_loss(history.history['loss'])
     model.summary()
