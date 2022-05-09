@@ -122,7 +122,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
             y_batch_train = np.expand_dims(y_batch_train, axis = 1)
             loss_value = model.loss(y_batch_train, logits)
         gradient = tape.gradient(loss_value, model.trainable_variables)
-        model.optimizer.apply_gradients(zip(gradient, model.trainable_variables))
+        model.a_optimizer.apply_gradients(zip(gradient, model.trainable_variables))
 
         # Update training metric.
         train_acc_metric.update_state(y_batch_train, logits)
