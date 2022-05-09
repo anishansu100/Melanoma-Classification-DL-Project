@@ -71,7 +71,7 @@ class Model(tf.keras.Model):
         :param labels: during training, matrix of shape (batch_size, self.num_classes) containing the train labels
         :return: the loss of the model as a Tensor
         """
-        loss_fn = BinaryCrossentropy(from_logits=True)
+        loss_fn = BinaryCrossentropy(from_logits=False)
         return loss_fn(labels, logits)
 
     def accuracy(self, logits, labels):
