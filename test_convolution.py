@@ -64,6 +64,7 @@ def main():
             ])
     tf.keras.utils.plot_model(model,to_file='model.png')
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
+    model.summary()
     history = model.fit(train_generator,
         batch_size= 50,
         epochs=1,
