@@ -149,7 +149,6 @@ def visualize_loss(losses):
     Uses Matplotlib to visualize the losses of our model.
     :param losses: list of loss data stored from train. Can use the model's loss_list 
     field 
-    NOTE: DO NOT EDIT
     :return: doesn't return anything, a plot should pop-up 
     """
     x = [i for i in range(len(losses))]
