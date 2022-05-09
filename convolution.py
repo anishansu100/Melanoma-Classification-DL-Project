@@ -115,6 +115,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
             # to its inputs are going to be recorded
             # on the GradientTape.
             logits = model.call(x_batch_train)  # Logits for this minibatch
+            print(logits)
             # Compute the loss value for this minibatch.
             y_batch_train = np.expand_dims(y_batch_train, axis = 1)
             loss_value = model.loss(y_batch_train, logits)
