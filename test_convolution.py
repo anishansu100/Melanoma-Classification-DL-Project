@@ -45,6 +45,7 @@ def main():
     '''
     train_generator, test_generator =  get_data('/home/anish_pradhan/Melanoma-Classification-DL-Project/train', '/home/anish_pradhan/Melanoma-Classification-DL-Project/train', True)
     model = Sequential([
+            InputLayer((200, 400, 3)),
             BatchNormalization(),
             Conv2D(4, 3, 1, activation="relu", padding="valid"),
             Conv2D(4, 3, 1, activation="relu", padding="valid"),
