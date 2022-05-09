@@ -75,7 +75,7 @@ class Model(tf.keras.Model):
     def accuracy(self, logits, labels):
         """
         Calculates the model's prediction accuracy by comparing
-        logits to correct labels – no need to modify this.
+        logits to correct labels - no need to modify this.
         
         :param logits: a matrix of size (num_inputs, self.num_classes); during training, this will be (batch_size, self.num_classes)
         containing the result of multiple convolution and feed forward layers
@@ -107,8 +107,6 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     # Intializes inputs and labels
     for step in range(len(train_inputs)):
         x_batch_train, y_batch_train = train_inputs[step]
-        plt.imshow(x_batch_train[step], interpolation='nearest')
-        plt.show()
         # Open a GradientTape to record the operations run
         # during the forward pass, which enables auto-differentiation.
         with tf.GradientTape() as tape:
@@ -158,9 +156,9 @@ def test(model, test_inputs):
     total_accuracy = np.array((29, 1))
     for step in range(len(test_inputs)):    
         x_batch_test, y_batch_test = test_inputs[step]
-        accuracy = model.accuracy(model.call(x_batch_test, True), y_batch_test)
+        accuracy = model.accuracy(model.call(x_batch_test), y_batch_test)
         total_accuracy[step] = accuracy
-    return np.average()
+    return np.mean(total_accuracy)
 
 def visualize_loss(losses): 
     """
@@ -239,35 +237,38 @@ def main():
     
     :return: None
     '''
-    train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
-    model  = Sequential([
-            InputLayer(input_shape=(200, 400, 3)),
-            BatchNormalization(),
-            Conv2D(4, 3, 1, activation="relu", padding="valid"),
-            Conv2D(4, 3, 1, activation="relu", padding="valid"),
-            MaxPool2D(2, padding="same"),
-            Conv2D(16, 3, 1, activation="relu", padding="valid"),
-            Conv2D(16, 3, 1, activation="relu", padding="valid"),
-            MaxPool2D(2, padding="same"),
-            Dropout(0.3),
-            GlobalAveragePooling2D(),
-            Flatten(),
-            Dense(1, activation='softmax')
-        ])
-    model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
-    model.summary()
-    model.fit(train_generator,
-        batch_size = 50,
-        epochs=10)
     # train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
-    # model = Model()
-    # epoches = 10
-    # train_acc_metric = BinaryAccuracy()
-    # train_auc_metric = AUC()
-    # for i in range(epoches):
-    #     print('epoch: ', i)
-    #     train(model, train_generator, train_acc_metric, train_auc_metric)
+    # model  = Sequential([
+    #         InputLayer(input_shape=(200, 400, 3)),
+    #         BatchNormalization(),
+    #         Conv2D(4, 3, 1, activation="relu", padding="valid"),
+    #         Conv2D(4, 3, 1, activation="relu", padding="valid"),
+    #         MaxPool2D(2, padding="same"),
+    #         Conv2D(16, 3, 1, activation="relu", padding="valid"),
+    #         Conv2D(16, 3, 1, activation="relu", padding="valid"),
+    #         MaxPool2D(2, padding="same"),
+    #         Dropout(0.3),
+    #         GlobalAveragePooling2D(),
+    #         Flatten(),
+    #         Dense(1, activation='softmax')
+    #     ])
+    # model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
+    # model.summary()
+    # model.fit(train_generator,
+    #     batch_size = 50,
+    #     epochs=10)
+    train_generator, test_generator =  get_data('/Users/anishansupradhan/Desktop/CS1430/Melanoma-Classification-DL-Project/train')
+    model = Model()
+    epoches = 10
+    train_acc_metric = BinaryAccuracy()
+    train_auc_metric = AUC()
+    for i in range(epoches):
+        print('epoch: ', i)
+        train(model, train_generator, train_acc_metric, train_auc_metric)
     
+    for j in range(epoches):
+        print('epoch: ', i)
+        test(model, test_generator)
     # test(model, test_generator)
     # visualizer(model, format='png', view=True)
     
