@@ -135,7 +135,7 @@ def train(model, train_inputs, train_acc_metric, train_auc_metric):
     #Display metrics at the end of each epoch.
     train_acc = train_acc_metric.result()
     train_auc = train_auc_metric.result()
-
+    print("\n")
     print("Training acc over epoch: %.4f" % (float(train_acc),))
     print("Training auc over epoch: %.4f" % (float(train_auc),))
     # Reset training metrics at the end of each epoch
