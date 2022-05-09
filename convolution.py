@@ -268,7 +268,11 @@ def main():
     
     for j in range(epoches):
         print('epoch: ', i)
-        test(model, test_generator)
+        accuracy = test(model, test_generator)
+        print(accuracy)
+        total = total + accuracy
+    total_accuracy = accuracy / 10
+    print(total_accuracy    )
     # test(model, test_generator)
     # visualizer(model, format='png', view=True)
     
