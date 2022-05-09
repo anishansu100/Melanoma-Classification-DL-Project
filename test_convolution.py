@@ -1,6 +1,4 @@
 from __future__ import absolute_import
-from functools import total_ordering
-from turtle import st
 from matplotlib import pyplot as plt
 from preprocess import get_data
 from matplotlib import pyplot as plt
@@ -18,7 +16,6 @@ def visualize_loss(losses):
     Uses Matplotlib to visualize the losses of our model.
     :param losses: list of loss data stored from train. Can use the model's loss_list 
     field 
-    NOTE: DO NOT EDIT
     :return: doesn't return anything, a plot should pop-up 
     """
     x = [i for i in range(len(losses))]
@@ -31,19 +28,16 @@ def visualize_loss(losses):
 
 def main():
     '''
-    Read in CIFAR10 data (limited to 2 classes), initialize your model, and train and 
-    test your model for a number of epochs. We recommend that you train for
-    10 epochs and at most 25 epochs. 
-    
-    CS1470 students should receive a final accuracy 
-    on the testing examples for cat and dog of >=70%.
-    
-    CS2470 students should receive a final accuracy 
-    on the testing examples for cat and dog of >=75%.
+    Read the  data  initialize our model, and then trains and 
+    tests the  model for a number of epochs(a hyperparameter).
+    This file is mostly for comparing results from  our 
+    training and testing from convolution.py.
     
     :return: None
     '''
+    # Preprocesses the train and testing datasets
     train_generator, test_generator =  get_data('/home/anish_pradhan/Melanoma-Classification-DL-Project/train', '/home/anish_pradhan/Melanoma-Classification-DL-Project/train', True)
+    # This is our model
     model = Sequential([
             InputLayer((200, 400, 3)),
             BatchNormalization(),
@@ -62,18 +56,27 @@ def main():
             Flatten(),
             Dense(1, activation='softmax')
             ])
-    tf.keras.utils.plot_model(model,to_file='model.png')
+    # Uncomment to create a .png file of the model above
+    # tf.keras.utils.plot_model(model,to_file='model.png')
+
+    # Compiles the model with the right learning rate, loss, and AUC
     model.compile(optimizer= tf.keras.optimizers.Adam(learning_rate = 1e-3), loss= tf.keras.losses.BinaryCrossentropy(), metrics = ['BinaryAccuracy', 'AUC'])
-    model.summary()
+
+    #Uncomment if you want to see the model summary
+    # model.summary()
+
+    # Model is trained here for 10 epoches
     history = model.fit(train_generator,
         batch_size= 50,
-        epochs=1,
+        epochs=10,
         shuffle=True)
-    visualize_loss(history.history['loss'])
-    model.summary()
+
+    # Uncomment to see the loss vs epoch graph
+    # visualize_loss(history.history['loss'])
     
+    # This is our testing where the output would be the accuracy
     print("Evaluate model on test data")
-    results = model.evaluate(train_generator, batch_size=50)
+    results = model.evaluate(test_generator, batch_size=50)
     print("test loss, test acc:", results)
     
 

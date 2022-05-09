@@ -3,12 +3,9 @@ from pickle import TRUE
 from matplotlib import pyplot as plt
 from preprocess import get_data
 
-import os
 from matplotlib import pyplot as plt
 import tensorflow as tf
 import numpy as np
-import random
-import math
 from tensorflow.keras import Sequential
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import BinaryAccuracy, AUC
@@ -22,9 +19,10 @@ from tensorflow.keras.applications import ResNet50
 class Model(tf.keras.Model):
     def __init__(self):
         """
-        This model class will contain the architecture for your CNN that 
-        classifies images. We have left in variables in the constructor
-        for you to fill out, but you are welcome to change them if you'd like.
+        This model class scontain the architecture of our model  that 
+        classifies whether the image is malignant or benign. We also determine the 
+        learning rate as another hyperparameter with the filter size and number of 
+        kernels.
         """
         super(Model, self).__init__()
         self.learning_rate = 1e-3
@@ -50,15 +48,14 @@ class Model(tf.keras.Model):
 
 
     def call(self, inputs):
-
         """
-        Runs a forward pass on an input batch of images.
+        Runs a forward pass on an input batch of images in the sequential.
         
         :param inputs: images, shape of (num_inputs, 32, 32, 3); during training, the shape is (batch_size, 32, 32, 3)
-        :param is_testing: a boolean that should be set to True only when you're doing Part 2 of the assignment and this function is being called during testing
         :return: logits - a matrix of shape (num_inputs, num_classes); during training, it would be (batch_size, 2)
         """
-        return self.model(inputs)
+        logits = self.model(inputs)
+        return logits
 
     def loss(self, labels, logits):
         """
@@ -81,8 +78,6 @@ class Model(tf.keras.Model):
         :param logits: a matrix of size (num_inputs, self.num_classes); during training, this will be (batch_size, self.num_classes)
         containing the result of multiple convolution and feed forward layers
         :param labels: matrix of size (num_labels, self.num_classes) containing the answers, during training, this will be (batch_size, self.num_classes)
-
-        NOTE: DO NOT EDIT
         
         :return: the accuracy of the model as a Tensor
         """
@@ -93,40 +88,29 @@ class Model(tf.keras.Model):
 
 def train(model, train_inputs):
     '''
-    Trains the model on all of the inputs and labels for one epoch. You should shuffle your inputs 
-    and labels - ensure that they are shuffled in the same order using tf.gather or zipping.
-    To increase accuracy, you may want to use tf.image.random_flip_left_right on your
-    inputs before doing the forward pass. You should batch your inputs.
+    Trains the model on all of the inputs and labels for one epoch.
     
     :param model: the initialized model to use for the forward pass and backward pass
-    :param train_inputs: train inputs (all inputs to use for training), 
-    shape (num_inputs, width, height, num_channels)
-    :param train_labels: train labels (all labels to use for training), 
-    shape (num_labels, num_classes)
+    :param train_inputs: train inputs includes a tuple of (batches of inputs, batches of labels)
     :return: Optionally list of losses per batch to use for visualize_loss
     '''
     train_acc_metric = BinaryAccuracy()
     train_auc_metric = AUC()
     # Intializes inputs and labels
     for step in range(len(train_inputs)):
-        x_batch_train, y_batch_train = train_inputs[step]
-        # Open a GradientTape to record the operations run
-        # during the forward pass, which enables auto-differentiation.
+        batch, labels = train_inputs[step]
         with tf.GradientTape() as tape:
             # Run the forward pass of the layer.
-            # The operations that the layer applies
-            # to its inputs are going to be recorded
-            # on the GradientTape.
-            logits = model.call(x_batch_train)  # Logits for this minibatch
+            logits = model.call(batch) 
             # Compute the loss value for this minibatch.
-            y_batch_train = np.expand_dims(y_batch_train, axis = 1)
-            loss_value = model.loss(y_batch_train, logits)
+            labels = np.expand_dims(labels, axis = 1)
+            loss_value = model.loss(labels, logits)
         gradient = tape.gradient(loss_value, model.trainable_variables)
         model.a_optimizer.apply_gradients(zip(gradient, model.trainable_variables))
 
         # Update training metric.
-        train_acc_metric.update_state(y_batch_train, logits)
-        train_auc_metric.update_state(y_batch_train, logits)
+        train_acc_metric.update_state(labels, logits)
+        train_auc_metric.update_state(labels, logits)
         # Log every 200 batches.
         print(
                 "Training loss (for one batch) at step %d: %.4f"
@@ -145,15 +129,11 @@ def train(model, train_inputs):
 
 def test(model, test_inputs):
     """
-    Tests the model on the test inputs and labels. You should NOT randomly 
-    flip images or do any extra preprocessing.
+    Tests the model on the test inputs and labels. 
     
-    :param test_inputs: test data (all images to be tested), 
-    shape (num_inputs, width, height, num_channels)
-    :param test_labels: test labels (all corresponding labels),
-    shape (num_labels, num_classes)
+    :param test_inputs: train inputs includes a tuple of (batches of inputs, batches of labels)
     :return: test accuracy - this should be the average accuracy across
-    all batchesc
+    all batches for one epoch
     """
     total_accuracy = 0
     for step in range(len(test_inputs)):    
@@ -184,21 +164,14 @@ def visualize_loss(losses):
 
 def main():
     '''
-    Read in CIFAR10 data (limited to 2 classes), initialize your model, and train and 
-    test your model for a number of epochs. We recommend that you train for
-    10 epochs and at most 25 epochs. 
-    
-    CS1470 students should receive a final accuracy 
-    on the testing examples for cat and dog of >=70%.
-    
-    CS2470 students should receive a final accuracy 
-    on the testing examples for cat and dog of >=75%.
+    Read the  data  initialize our model, and then trains and 
+    tests the  model for a number of epochs(a hyperparameter).
     
     :return: None
     '''
     train_generator, test_generator =  get_data('/home/anish_pradhan/Melanoma-Classification-DL-Project/train', '/home/anish_pradhan/Melanoma-Classification-DL-Project/train', True)
     model = Model()
-    epoches = 1
+    epoches = 10
     for i in range(epoches):
         print('epoch: ', i)
         train(model, train_generator)
