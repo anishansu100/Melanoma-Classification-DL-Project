@@ -28,6 +28,8 @@ class Model(tf.keras.Model):
         for you to fill out, but you are welcome to change them if you'd like.
         """
         super(Model, self).__init__()
+        self.learning_rate = 1e-3
+        self.a_optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
         self.model = Sequential([
             BatchNormalization(),
             Conv2D(4, 3, 1, activation="relu", padding="valid"),
